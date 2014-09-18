@@ -64,47 +64,4 @@ write.table(train_test_mean,"train_test_means.txt", row.name=FALSE)
 
 # ---------------------------------- Create Data Coding File --------------------------------
 
-varlist <- as.data.frame(label)
-varlist$var_num <- 4:(nrow(varlist)+3)
-row.names(varlist) <- 1:nrow(varlist)
-
-# requires var_descr function
-varlist <- cbind(varlist,sapply(varlist$label, function(x) var_descr(x)))
-colnames(varlist)[3] <- "description"
-
-varlist$output <- paste(varlist$var_num,".  ",varlist$label,": ",varlist$description, sep="")
-
-# output can be pasted into README.md
-print(as.data.frame(varlist$output), quote=FALSE, row.names=FALSE, right=FALSE)
-
-var_descr <- function(x) {
-  sig <- NA
-  if (grepl("tBodyAcc",x)) {sig = "accelerometer total body signal"}
-  if (grepl("tGravityAcc",x)) {sig = "accelerometer total gravity signal"}
-  if (grepl("tBodyAccJerk",x)) {sig = "accelerometer total body jerk signal"}
-  if (grepl("tBodyGyro",x)) {sig = "gyroscope total body signal"}
-  if (grepl("tBodyGyroJerk",x)) {sig = "gyroscope total body jerk signal"}
-  if (grepl("tBodyAccMag",x)) {sig = "accelerometer total body signal magnitude"}
-  if (grepl("tGravityAccMag",x)) {sig = "accelerometer total gravity signal magnitude"}
-  if (grepl("tBodyAccJerkMag",x)) {sig = "accelerometer total body jerk signal magnitude"}
-  if (grepl("tBodyGyroMag",x)) {sig = "gyroscope total body signal magnitude"}
-  if (grepl("tBodyGyroJerkMag",x)) {sig = "gyroscope total body jerk signal magnitude"}
-  if (grepl("fBodyAcc",x)) {sig = "accelerometer total body frequency domain signal"}
-  if (grepl("fBodyAccJerk",x)) {sig = "accelerometer total body jerk frequency domain signal"}
-  if (grepl("fBodyGyro",x)) {sig = "gyroscope total body frequency domain signal"}
-  if (grepl("fBodyAccMag",x)) {sig = "accelerometer total body magnitude frequency domain signal"}
-  if (grepl("fBodyAccJerkMag",x)) {sig = "accelerometer total body jerk magnitude frequency domain signal"}
-  if (grepl("fBodyGyroMag",x)) {sig = "gyroscope total body magnitude frequency domain signal"}
-  if (grepl("fBodyGyroJerkMag",x)) {sig = "gyroscope total body jerk magnitude frequency domain signal"}
-  parm <- NA
-  if (grepl("mean()",x)) {parm ="within window mean of 128 readings over 2.56 seconds"}
-  if (grepl("std()",x)) {parm ="within window standard deviation of 128 readings over 2.56 seconds"}
-  axis <- NA
-  if(grepl("-X",x)) {axis = "X axis"}
-  if(grepl("-Y",x)) {axis = "Y axis"}
-  if(grepl("-Z",x)) {axis = "Z axis"}
-  ave <- "mean across windows for subject and activity"
-  desc <- ifelse(is.na(axis),paste(sig,parm,ave,sep=", "),paste(sig,parm,axis,ave,sep=", "))
-  return(desc)
-}  
-
+source(file="README.RMD")

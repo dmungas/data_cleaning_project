@@ -1,0 +1,118 @@
+---
+title: "README"
+output: 
+  html_document:
+    keep_md: true
+---
+
+The program run_analysis.R implements the steps to develop the tidy datasets for the Getting and Cleaning Data course project. This program does the following:
+
+1. Reads data on human activity recognition using smartphones downloaded for the UC Irvine Machine Learning Repository (download url: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip), and merges training and test sets into one data set.
+2. Extracts the within-window mean and standard deviation parameters for each measurement. 
+3. Provides descriptive labels for  activities in the data set.
+4. Provides descriptive labes for the variables in the dataset.
+5. Extracts a second, independent tidy data set with the average of each variable for each activity and each subject. Saves this as a text file: train_test_means.txt.
+
+To run this program:
+
+1. run_analysis.R should be located at the root level of the R working directory for this project.
+2. A /data subdirectory is required.
+3. The download file from the UC Irvine Machine Learning Repository is a zip archive. It should be expanded, and the resulting folder "UCI HAR Dataset" should be placed in the /data subdirectory.
+4. The tidy dataset output in step 5 is "train_test_means.txt" located at the root level of the R working directory for this project. This is a space delimited file with 180 observations (30 subjects X 6 activities) for 79 variables that represent subject-by-activity means for accelerometer and gyroscope 3-axial measures.
+
+---
+
+Data Coding for train_test_means.txt:
+
+1. **label:** subj_id  
+
+    **type:** numeric, continuous
+  
+    **description:** unique subject identifier 
+  
+2. **label:** activity  
+
+    **type:** character
+    
+    **description:** descriptive label for type of activity including:  
+    WALKING - Walking  
+    WALKING_UPSTAIRS - Walking Upstairs  
+    WALKING_DOWNSTAIRS - Walking Downstairs  
+    SITTING - Sitting  
+    STANDING - Standing  
+    LAYING - Laying    
+    
+3. **label:** dataset:
+    **type:** character
+    
+    **description:** subsample/dataset that results come from:  
+    Training - Training set  
+    Test: Test set    
+
+```{r test, results="asis", comment="", echo=FALSE}
+
+var_descr <- function(x) {
+  sig <- NA
+  if (grepl("tBodyAcc",x)) {sig = "accelerometer total body signal"}
+  if (grepl("tGravityAcc",x)) {sig = "accelerometer total gravity signal"}
+  if (grepl("tBodyAccJerk",x)) {sig = "accelerometer total body jerk signal"}
+  if (grepl("tBodyGyro",x)) {sig = "gyroscope total body signal"}
+  if (grepl("tBodyGyroJerk",x)) {sig = "gyroscope total body jerk signal"}
+  if (grepl("tBodyAccMag",x)) {sig = "accelerometer total body signal magnitude"}
+  if (grepl("tGravityAccMag",x)) {sig = "accelerometer total gravity signal magnitude"}
+  if (grepl("tBodyAccJerkMag",x)) {sig = "accelerometer total body jerk signal magnitude"}
+  if (grepl("tBodyGyroMag",x)) {sig = "gyroscope total body signal magnitude"}
+  if (grepl("tBodyGyroJerkMag",x)) {sig = "gyroscope total body jerk signal magnitude"}
+  if (grepl("fBodyAcc",x)) {sig = "accelerometer total body frequency domain signal"}
+  if (grepl("fBodyAccJerk",x)) {sig = "accelerometer total body jerk frequency domain signal"}
+  if (grepl("fBodyGyro",x)) {sig = "gyroscope total body frequency domain signal"}
+  if (grepl("fBodyAccMag",x)) {sig = "accelerometer total body magnitude frequency domain signal"}
+  if (grepl("fBodyAccJerkMag",x)) {sig = "accelerometer total body jerk magnitude frequency domain signal"}
+  if (grepl("fBodyGyroMag",x)) {sig = "gyroscope total body magnitude frequency domain signal"}
+  if (grepl("fBodyGyroJerkMag",x)) {sig = "gyroscope total body jerk magnitude frequency domain signal"}
+  parm <- NA
+  if (grepl("mean()",x)) {parm ="within window mean of 128 readings over 2.56 seconds"}
+  if (grepl("std()",x)) {parm ="within window standard deviation of 128 readings over 2.56 seconds"}
+  axis <- NA
+  if(grepl("-X",x)) {axis = "X axis"}
+  if(grepl("-Y",x)) {axis = "Y axis"}
+  if(grepl("-Z",x)) {axis = "Z axis"}
+  ave <- "mean across windows for subject and activity"
+  desc <- ifelse(is.na(axis),paste(sig,parm,ave,sep=", "),paste(sig,parm,axis,ave,sep=", "))
+  return(desc)
+}
+
+varlist <- as.data.frame(label)
+varlist$var_num <- 4:(nrow(varlist)+3)
+row.names(varlist) <- 1:nrow(varlist)
+
+# requires var_descr function
+varlist <- cbind(varlist,sapply(varlist$label, function(x) var_descr(x)))
+colnames(varlist)[3] <- "description"
+
+varlist$output <- paste(varlist$var_num,".  ",varlist$label,": ",varlist$description, sep="")
+
+# output can be pasted into README.md
+# print(as.data.frame(varlist$output), quote=FALSE, row.names=FALSE, right=FALSE)
+
+options(digits=4)
+
+output <- ""
+for(i in 1:nrow(varlist)){
+  output <- paste(
+    output,"\n\n",
+    i+3,". ",
+    "**label:** ",varlist[i,"label"],"\n\n",
+    "\t **type:** ","continuous","\n\n",
+    "\t **description:** ",varlist[i,"description"],"\n\n",
+    "\t **minimum:** ",format(min(train_test_mean[,as.character(varlist[i,"label"])]),digits=4),"\n\n",
+    "\t **maximum:** ",format(max(train_test_mean[,as.character(varlist[i,"label"])]),digits=4),"\n\n",
+    "\t **mean:** ",format(mean(train_test_mean[,as.character(varlist[i,"label"])]),digits=4),"\n\n",
+    "\t **standard deviation:** ",format(sd(train_test_mean[,as.character(varlist[i,"label"])]),digits=4),"\n\n",
+    sep=""
+    )
+}
+
+cat(output, sep="")
+
+```
