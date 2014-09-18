@@ -1,9 +1,4 @@
----
-title: "README"
-output: 
-  html_document:
-    keep_md: true
----
+# README
 
 The program run_analysis.R implements the steps to develop the tidy datasets for the Getting and Cleaning Data course project. This program does the following:
 
@@ -42,7 +37,8 @@ Data Coding for train_test_means.txt:
     STANDING - Standing  
     LAYING - Laying    
     
-3. **label:** dataset:
+3. **label:** dataset:  
+
     **type:** character
     
     **description:** subsample/dataset that results come from:  

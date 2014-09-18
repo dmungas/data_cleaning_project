@@ -42,14 +42,15 @@ Data Coding for train_test_means.txt:
     STANDING - Standing  
     LAYING - Laying    
     
-3. **label:** dataset:
+3. **label:** dataset:  
+
     **type:** character
     
     **description:** subsample/dataset that results come from:  
     Training - Training set  
     Test: Test set    
 
-```{r test, results="asis", comment="", echo=FALSE}
+```{r data_coding, results="asis", comment="", echo=FALSE}
 
 var_descr <- function(x) {
   sig <- NA
